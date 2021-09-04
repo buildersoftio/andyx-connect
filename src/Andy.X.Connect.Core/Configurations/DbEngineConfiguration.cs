@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Andy.X.Connect.Core.Configurations
 {
@@ -9,8 +10,18 @@ namespace Andy.X.Connect.Core.Configurations
 
     public class Engine
     {
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public EngineTypes EngineType { get; set; }
+
         public string ConnectionString { get; set; }
         public List<Database> Databases { get; set; }
+    }
+
+    public enum EngineTypes
+    {
+        MSSQL,
+        Oracle,
+        PostgreSQL
     }
 
     public class Database

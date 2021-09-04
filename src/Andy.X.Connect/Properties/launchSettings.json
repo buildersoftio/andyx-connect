@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Andy.X.Connect": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

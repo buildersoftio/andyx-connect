@@ -11,42 +11,47 @@ Follow the [Getting Started](https://andyx.azurewebsites.net/) instructions how 
 
 For local development and testing, you can run Andy X within a Docker container, for more info click [here](https://hub.docker.com/u/buildersoftdev)
 
-After you run Andy X you will have to configure Andy X Connect. Configuring this adapter is quite easy only to json files need to be configured <b>sqlconnection_config.json</b> and <b>xnode_config.json</b>
-> <b>sqlconnection_config.json</b> - SQL Connection Configuration file, it's the file where we specify tables which this adapter will check the changes and produce them.
+After you run Andy X you will have to configure Andy X Connect. Configuring this adapter is quite easy only to json files need to be configured <b>dbengine_config.json</b> and <b>xnode_config.json</b>
+> <b>dbengine_config.json</b> - SQL Connection Configuration file, it's the file where we specify tables which this adapter will check the changes and produce them.
 
 > <b>xnode_config.json</b> - Andy X Configuration File, it's the file where we specify the connection with Andy X.
 
-### Sql Configuration File
+### Database Engine Configuration File
 Below is an example of configuration file, this file should be saved into config directory of Andy X Connect before running this service.
 
 	{
-		"ConnectionString": "Data Source=localhost;Initial Catalog={databaseName/master};Integrated Security=False;User Id=sa;Password=YourStrong!Passw0rd;MultipleActiveResultSets=True",
-		"Databases":[
-			{
-				"Name": "{databaseName}",
-				"Tables": [
-					{
-						"Name": "{tableName}",
-						"Insert": true,
-						"Update": true,
-						"Delete": true
-					},
-					{
-						"Name": "{tableName}",
-						"Insert": true,
-						"Update": true,
-						"Delete": false
-					}
-				]
-			}
-		]
+		"Engines": 
+		[{
+			"EngineType": "MSSQL", 
+			"ConnectionString": "Data Source=localhost;Initial Catalog={databaseName/master};Integrated Security=False;User Id=sa;Password=YourStrong!Passw0rd;MultipleActiveResultSets=True",
+			"Databases":[
+				{
+					"Name": "{databaseName}",
+					"Tables": [
+						{
+							"Name": "{tableName}",
+							"Insert": true,
+							"Update": true,
+							"Delete": true
+						},
+						{
+							"Name": "{tableName}",
+							"Insert": true,
+							"Update": true,
+							"Delete": false
+						}
+					]
+				}
+			]
+		}]
 	}
+EngineType accepts only MSSQL, Oracle and PostgreSQL for now
 
 ### Andy X Configuration File
 Below is an example of Andy X configuration file, this file should be saved into config directory of Andy X Connect before running this service.
 
 	{
-		"NodeUrl": "https://localhost:9001",
+		"NodeUrls": ["https://localhost:9001"],
 		"Tenant": "{tenantName}",
 		"Product": "{productName}",
 		"Component": "{componentName}"
@@ -70,17 +75,17 @@ These are some other repos for related projects:
 
 ## Deploying Andy X Connect with docker-compose
 
-Andy X Connect can be easily deployed on a docker container using docker-compose, for more info click [here](https://hub.docker.com/r/buildersoftdev/andyx-mssql-adapter)
+Andy X Connect can be easily deployed on a docker container using docker-compose, for more info click [here](https://hub.docker.com/r/buildersoftdev/andyx-connect)
 
     version: '3.4'
     
     services:
-        andyx-mssql-adapter:
-        container_name: andyx-mssql-adapter
-        image: buildersoftdev/andyx-mssql-adapter:1.0.0-preview
+        andyx-connect:
+        container_name: andyx-connect
+        image: buildersoftdev/andyx-connect:1.0.0-preview
     
         volumes:
-            - ./sqlconnection_config.json:/app/config/sqlconnection_config.json
+            - ./dbengine_config.json:/app/config/dbengine_config.json
             - ./xnode_config.json:/app/config/xnode_config.json
 
 Network configuration using docker-compose is not needed if only Andy X Connect is deployed. Network should be configured if this adapter will be deployed together with Andy X and Andy X Storage.
@@ -113,12 +118,12 @@ Below is an example of deploying Andy X, Andy X Storage, Andy X Connect and Micr
 	
 	# ----------------------------------------------------------------------------------------------------
 	
-		andyx-mssql-adapter:
-		container_name: andyx-mssql-adapter
-		image: buildersoftdev/andyx-mssql-adapter:1.0.1-preview
+		andyx-connect:
+		container_name: andyx-connect
+		image: buildersoftdev/andyx-connect:1.0.0-preview
 		volumes:
             # -- In the same folder with docker-compose should be these two files, before running docker-compose. 
-			- ./sqlconnection_config.json:/app/config/sqlconnection_config.json
+			- ./dbengine_config.json:/app/config/dbengine_config.json
 			- ./xnode_config.json:/app/config/xnode_config.json
 		networks:
 			- local
