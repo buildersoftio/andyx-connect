@@ -4,7 +4,7 @@ using Andy.X.Connect.Core.Abstraction.Services.Sql;
 using System;
 using TableDependency.SqlClient;
 
-namespace Andy.X.MSSQL.Code.Generated.Worker
+namespace Andy.X.Connect.MSSQL.Code.Generated.Service
 {
     public class SqlDbTableService : ISqlDbTableService
     {
@@ -189,12 +189,23 @@ namespace Andy.X.MSSQL.Code.Generated.Worker
             //    producerDelete.OpenAsync().Wait();
             //    Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|deleteProducer|{dbName}-{table.Name}-delete|reconnecting");
             //}
+            
+            //sqlTableDependency.OnStatusChanged -= SqlTableDependency_OnStatusChanged;
+            //sqlTableDependency.OnChanged -= SqlTableDependency_OnChanged;
+            //sqlTableDependency.OnError -= SqlTableDependency_OnError;
 
+            //sqlTableDependency = new SqlTableDependency<{entity}> (connectionString, table.Name);
+
+            //sqlTableDependency.OnStatusChanged += SqlTableDependency_OnStatusChanged;
+            //sqlTableDependency.OnChanged += SqlTableDependency_OnChanged;
+            //sqlTableDependency.OnError += SqlTableDependency_OnError;
+
+            sqlTableDependency.Stop();
             sqlTableDependency.Start();
             Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|adapter|{table.Name}|reconnecting");
         }
 
-        public void Disonnect()
+        public void Disconnect()
         {
             isConnected = false;
             sqlTableDependency.Stop();

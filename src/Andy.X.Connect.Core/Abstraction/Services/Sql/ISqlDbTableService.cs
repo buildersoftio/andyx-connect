@@ -3,6 +3,6 @@
     public interface ISqlDbTableService
     {
         public void Connect();
-        public void Disonnect();
+        public void Disconnect();
     }
 }

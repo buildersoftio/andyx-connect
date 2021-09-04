@@ -4,7 +4,7 @@ using Andy.X.Connect.Core.Abstraction.Services.Sql;
 using System;
 using TableDependency.SqlClient;
 
-namespace Andy.X.MSSQL.Code.Generated.Worker
+namespace Andy.X.Connect.Experimental.Worker
 {
     public class SqlDbTableService : ISqlDbTableService
     {
@@ -97,8 +97,10 @@ namespace Andy.X.MSSQL.Code.Generated.Worker
             }
 
             if (e.Status == TableDependency.SqlClient.Base.Enums.TableDependencyStatus.Started)
+            {
                 Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|adapter|{table.Name}|connected");
-
+            }
+            Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|adapter|status={e.Status}");
         }
 
         private void SqlTableDependency_OnError(object sender, TableDependency.SqlClient.Base.EventArgs.ErrorEventArgs e)
@@ -194,7 +196,7 @@ namespace Andy.X.MSSQL.Code.Generated.Worker
             Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|adapter|{table.Name}|reconnecting");
         }
 
-        public void Disonnect()
+        public void Disconnect()
         {
             isConnected = false;
             sqlTableDependency.Stop();

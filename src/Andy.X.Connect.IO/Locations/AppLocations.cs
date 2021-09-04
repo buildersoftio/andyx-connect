@@ -37,9 +37,9 @@ namespace Andy.X.Connect.IO.Locations
             return Path.Combine(ConfigDirectory(), "dbengine_config.json");
         }
 
-        public static string GetWorkerAssemblyFile(string engine, string database, string table)
+        public static string GetDbServiceAssemblyFile(string engine, string database, string table)
         {
-            return Path.Combine(GetRootDirectory(), $"Andy.X.{engine}.{database}.{table}.Worker.dll");
+            return Path.Combine(GetRootDirectory(), $"Andy.X.{engine}.{database}.{table}.Service.dll");
         }
 
         public static string GetSqlModelGeneratorFile()
@@ -50,6 +50,11 @@ namespace Andy.X.Connect.IO.Locations
         public static string GetServiceCodeGeneratorFile()
         {
             return Path.Combine(TemplatesDirectory(), "csharp_sql_dbworker.cstemp");
+        }
+
+        public static string[] GetAssemblyFiles()
+        {
+            return Directory.GetFiles(GetRootDirectory(), "*.dll");
         }
     }
 }
