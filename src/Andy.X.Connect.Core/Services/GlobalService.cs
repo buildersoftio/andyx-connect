@@ -2,6 +2,7 @@
 using Andy.X.Connect.Core.Configurations;
 using Andy.X.Connect.Core.Services.Generators;
 using Andy.X.Connect.Core.Utilities.Extensions.Json;
+using Andy.X.Connect.Core.Utilities.Logging;
 using Andy.X.Connect.IO.Locations;
 
 using System;
@@ -29,12 +30,12 @@ namespace Andy.X.Connect.Core.Services
 
         private void ReadConfigurationFiles()
         {
-            Console.WriteLine("ANDYX-CONNECT|[init]|importing|config_files");
+            Logger.LogInformation("Importing configuration files");
             if (Directory.Exists(AppLocations.ConfigDirectory()) != true)
             {
-                Console.WriteLine($"ANDYX-CONNECT|[error]|importing|config directory|does not exists|path={AppLocations.ConfigDirectory()}");
-                Console.WriteLine($"ANDYX-CONNECT|[ok]|importing|config directory|created|path={AppLocations.ConfigDirectory()}");
+                Logger.LogError($"Importing configuration files failed, config directory does not exists; path={AppLocations.ConfigDirectory()}");
                 Directory.CreateDirectory(AppLocations.ConfigDirectory());
+                Logger.LogInformation($"Importing configuration files failed, config directory created; path={AppLocations.ConfigDirectory()}");
             }
 
             if (Directory.Exists(AppLocations.ServicesDirectory()) != true)
@@ -46,22 +47,22 @@ namespace Andy.X.Connect.Core.Services
             // checking if files exits
             if (File.Exists(AppLocations.GetDbEnginesConfigurationFile()) != true)
             {
-                Console.WriteLine($"ANDYX-CONNECT|[error]|importing|dbengine_config.json|file not exists|path={AppLocations.GetDbEnginesConfigurationFile()}");
+                Logger.LogError($"Importing configuration files failed, dbengine_config.json file does not exists; path={AppLocations.GetDbEnginesConfigurationFile()}");
                 throw new Exception($"ANDYX-CONNECT|[error]|importing|dbengine_config.json|file not exists|path={AppLocations.GetDbEnginesConfigurationFile()}");
             }
 
             // checking if files exits
             if (File.Exists(AppLocations.GetXNodeConfigurationFile()) != true)
             {
-                Console.WriteLine($"ANDYX-CONNECT|[error]|importing|xnode_config.json|file not exists|path={AppLocations.GetXNodeConfigurationFile()}");
+                Logger.LogError($"Importing configuration files failed, xnode_config.json file does not exists; path={AppLocations.GetXNodeConfigurationFile()}");
                 throw new Exception($"ANDYX-CONNECT|[error]|importing|xnode_config.json|file not exists|path={AppLocations.GetXNodeConfigurationFile()}");
             }
 
             dbEngineConfiguration = File.ReadAllText(AppLocations.GetDbEnginesConfigurationFile()).JsonToObject<DbEngineConfiguration>();
-            Console.WriteLine($"ANDYX-CONNECT|[ok]|importing|dbengine_config.json|imported");
+            Logger.LogInformation($"Database engines are imported successfully");
 
             xNodeConfiguration = File.ReadAllText(AppLocations.GetXNodeConfigurationFile()).JsonToObject<XNodeConfiguration>();
-            Console.WriteLine($"ANDYX-CONNECT|[ok]|importing|xnode_config.json|imported");
+            Logger.LogInformation($"Andy X configuration settings are imported successfully");
         }
 
         private void CreateMSSqlServices()
@@ -97,7 +98,7 @@ namespace Andy.X.Connect.Core.Services
                 }
                 else
                 {
-                    Console.WriteLine($"ANDYX-CONNECT|[skipped]|{engine.EngineType}|engine_not_implemented");
+                    Logger.LogWarning($"Engine {engine.EngineType} has not been implemented");
                 }
             }
         }

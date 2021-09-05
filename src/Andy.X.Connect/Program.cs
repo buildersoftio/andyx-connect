@@ -1,4 +1,5 @@
 ﻿using Andy.X.Connect.Core.Services;
+using Andy.X.Connect.Core.Utilities.Logging;
 using System;
 
 namespace Andy.X.Connect
@@ -8,13 +9,11 @@ namespace Andy.X.Connect
         static void Main(string[] args)
         {
             GlobalService globalService;
-            Console.WriteLine("Buildersoft");
-            Console.WriteLine("Buildersoft Andy X");
             Console.WriteLine("Buildersoft Andy X Connect");
-            Console.WriteLine("---------------------------------------------------");
 
             globalService = new GlobalService();
-            Console.WriteLine("ANDYX-CONNECT|ready");
+            Logger.LogInformation("services are ready");
+
 
             while (true)
             {
