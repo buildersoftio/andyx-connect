@@ -1,4 +1,5 @@
 ﻿using Andy.X.Connect.Core.Configurations;
+using Andy.X.Connect.Core.Utilities.Logging;
 using Andy.X.Connect.IO.Locations;
 
 using Microsoft.CodeAnalysis;
@@ -25,7 +26,7 @@ namespace Andy.X.Connect.Core.Services.Generators
         public SqlDbServiceGenerator(DbEngineConfiguration dbEngineConfiguration)
         {
             this.dbEngineConfiguration = dbEngineConfiguration;
-            Console.WriteLine("ANDYX-CONNECT|[ok]|schema|MSSQL|started");
+            Logger.LogInformation("MSSQL schemas started");
         }
 
         public void CreateMSSqlTableModels()
@@ -52,16 +53,17 @@ namespace Andy.X.Connect.Core.Services.Generators
                             Thread.Sleep(300);
                         }
 
-                        Console.WriteLine($"ANDYX-CONNECT|[ok]|schema|{engine.EngineType}.{database.Name}.{table.Name}|creating");
+                        Logger.LogInformation($"MSSQL schema for table {engine.EngineType}.{database.Name}.{table.Name} is creating");
 
                         // Generate dll file for Service
                         string code = activeCodeGeneratedTemplate;
                         BuildSqlDbServiceDllFile(engine, database.Name, table.Name, code);
-                        Console.WriteLine($"ANDYX-CONNECT|[ok]|schema|{engine.EngineType}.{database.Name}.{table.Name}|created");
+                        Logger.LogInformation($"MSSQL schema for table {engine.EngineType}.{database.Name}.{table.Name} is created successfully");
                     }
                 }
             }
-            Console.WriteLine("ANDYX-CONNECT|[ok]|schema|MSSQL|finished");
+            Logger.LogInformation("MSSQL schemas finished");
+
         }
 
         private void ConvertSqlTableToCSharpModel(Engine engine, string database, string table, string command)
@@ -83,6 +85,7 @@ namespace Andy.X.Connect.Core.Services.Generators
 
         private void BuildSqlDbServiceDllFile(Engine engine, string database, string table, string code)
         {
+
             string serviceName = $"Andy.X.{engine.EngineType}.{database}.{table}.Service";
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
@@ -99,10 +102,11 @@ namespace Andy.X.Connect.Core.Services.Generators
             var emitResult = compilation.Emit(fileName);
             if (!emitResult.Success)
             {
-                Console.WriteLine($"ANDYX-CONNECT|[error]|schema|{database}.{table}|failed to generate, check database and table name, details below");
+                Logger.LogError($"There is an error on generating schema for {database}.{table}, please check the database and table name, details are below");
+
                 foreach (var error in emitResult.Diagnostics)
                 {
-                    Console.WriteLine($"ANDYX-CONNECT|[error]|schema|{database}.{table}|details={error.ToString()}");
+                    Logger.LogError($"Error on schema for {database}.{table}, details={error}"); 
                 }
             }
         }

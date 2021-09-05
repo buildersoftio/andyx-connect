@@ -1,6 +1,8 @@
 ﻿using Andy.X.Client;
 using Andy.X.Connect.Core.Configurations;
 using Andy.X.Connect.Core.Abstraction.Services.Sql;
+using Andy.X.Connect.Core.Utilities.Logging;
+
 using System;
 using TableDependency.SqlClient;
 
@@ -49,7 +51,7 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
                 });
 
                 producerInsert.BuildAsync().Wait();
-                Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|insertProducer|{dbName}-{table.Name}-insert|initialized");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-insert has been initialized");
             }
 
             if (table.Update == true)
@@ -62,7 +64,7 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
                     Topic = $"{dbName}-{table.Name}-update"
                 });
                 producerUpdate.BuildAsync().Wait();
-                Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|updateProducer|{dbName}-{table.Name}-update|initialized");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-update has been initialized");
             }
 
             if (table.Delete == true)
@@ -75,7 +77,7 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
                     Topic = $"{dbName}-{table.Name}-delete"
                 });
                 producerDelete.BuildAsync().Wait();
-                Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|deleteProducer|{dbName}-{table.Name}-delete|initialized");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-delete has been initialized");
             }
         }
 
@@ -86,24 +88,26 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
                 if (e.Status == TableDependency.SqlClient.Base.Enums.TableDependencyStatus.StopDueToError ||
                     e.Status == TableDependency.SqlClient.Base.Enums.TableDependencyStatus.StopDueToCancellation)
                 {
-                    Console.WriteLine($"ANDYX-CONNECT-MSSQL|[error]|adapter|{table.Name}|disconnected");
+                    Logger.LogError($"MSSQL Adapter for {table.Name} has been disconnected");
+
                     Reconnect();
                 }
             }
             else
             {
                 if (e.Status == TableDependency.SqlClient.Base.Enums.TableDependencyStatus.StopDueToCancellation)
-                    Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|adapter|{table.Name}|disconnected_due_cancellation");
+                    Logger.LogInformation($"MSSQL Adapter for {table.Name} has been disconnected due to cancellation");
+
             }
 
             if (e.Status == TableDependency.SqlClient.Base.Enums.TableDependencyStatus.Started)
-                Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|adapter|{table.Name}|connected");
+                Logger.LogInformation($"MSSQL Adapter for {table.Name} has been connected successfully");
 
         }
 
         private void SqlTableDependency_OnError(object sender, TableDependency.SqlClient.Base.EventArgs.ErrorEventArgs e)
         {
-            Console.WriteLine($"ANDYX-CONNECT-MSSQL|[error]|{e.Server}|{e.Database}|details={e.Error.Message}");
+            Logger.LogError($"MSSQL an error occurred to Adapter {e.Server}|{e.Database}, details={e.Error.Message}");
         }
 
     private void SqlTableDependency_OnChanged(object sender, TableDependency.SqlClient.Base.EventArgs.RecordChangedEventArgs<{entity}> e)
@@ -154,21 +158,23 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
             if (table.Insert == true)
             {
                 producerInsert.OpenAsync().Wait();
-                Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|insertProducer|{dbName}-{table.Name}-insert|connecting");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-insert is conencting to the x-node");
             }
             if (table.Update == true)
             {
                 producerUpdate.OpenAsync().Wait();
-                Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|updateProducer|{dbName}-{table.Name}-update|connecting");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-update is conencting to the x-node");
+
             }
             if (table.Delete == true)
             {
                 producerDelete.OpenAsync().Wait();
-                Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|deleteProducer|{dbName}-{table.Name}-delete|connecting");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-delete is conencting to the x-node");
             }
 
             sqlTableDependency.Start();
-            Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|adapter|{table.Name}|connecting");
+            Logger.LogInformation($"MSSQL Adapter for {table.Name} is connecting");
+
         }
 
         private void Reconnect()
@@ -202,29 +208,33 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
 
             sqlTableDependency.Stop();
             sqlTableDependency.Start();
-            Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|adapter|{table.Name}|reconnecting");
+            Logger.LogWarning($"MSSQL Adapter for {table.Name} is reconnecting");
+
         }
 
         public void Disconnect()
         {
             isConnected = false;
             sqlTableDependency.Stop();
-            Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|adapter|{table.Name}|disconnected");
+            Logger.LogWarning($"MSSQL Adapter for {table.Name} is disconnected");
+
 
             if (table.Insert == true)
             {
                 producerInsert.CloseAsync();
-                Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|insertProducer|{dbName}-{table.Name}-insert|disconnected");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-insert is disconnected");
+
             }
             if (table.Update == true)
             {
                 producerUpdate.CloseAsync();
-                Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|updatedProducer|{dbName}-{table.Name}-update|disconnected");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-update is disconnected");
+
             }
             if (table.Delete == true)
             {
                 producerDelete.CloseAsync();
-                Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|deleteProducer|{dbName}-{table.Name}-delete|disconnected");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-delete is disconnected");
             }
         }
     }
