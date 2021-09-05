@@ -88,7 +88,6 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
                 if (e.Status == TableDependency.SqlClient.Base.Enums.TableDependencyStatus.StopDueToError ||
                     e.Status == TableDependency.SqlClient.Base.Enums.TableDependencyStatus.StopDueToCancellation)
                 {
-                    Console.WriteLine($"ANDYX-CONNECT-MSSQL|[error]|adapter|{table.Name}|disconnected");
                     Logger.LogError($"MSSQL Adapter for {table.Name} has been disconnected");
 
                     Reconnect();
@@ -174,7 +173,6 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
             }
 
             sqlTableDependency.Start();
-            Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|adapter|{table.Name}|connecting");
             Logger.LogInformation($"MSSQL Adapter for {table.Name} is connecting");
 
         }
@@ -218,7 +216,8 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
         {
             isConnected = false;
             sqlTableDependency.Stop();
-            Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|adapter|{table.Name}|disconnected");
+            Logger.LogWarning($"MSSQL Adapter for {table.Name} is disconnected");
+
 
             if (table.Insert == true)
             {
