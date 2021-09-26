@@ -20,30 +20,31 @@ After you run Andy X you will have to configure Andy X Connect. Configuring this
 Below is an example of configuration file, this file should be saved into config directory of Andy X Connect before running this service.
 
 	{
-		"Engines": 
-		[{
-			"EngineType": "MSSQL", 
-			"ConnectionString": "Data Source=localhost;Initial Catalog={databaseName/master};Integrated Security=False;User Id=sa;Password=YourStrong!Passw0rd;MultipleActiveResultSets=True",
-			"Databases":[
-				{
-					"Name": "{databaseName}",
-					"Tables": [
-						{
-							"Name": "{tableName}",
-							"Insert": true,
-							"Update": true,
-							"Delete": true
-						},
-						{
-							"Name": "{tableName}",
-							"Insert": true,
-							"Update": true,
-							"Delete": false
-						}
-					]
-				}
-			]
-		}]
+	  "Engines": [
+	    {
+	      "EngineType": "MSSQL",
+	      "ConnectionString": "Data Source=localhost;Initial Catalog={databaseName/master};Integrated Security=False;User Id=sa;Password=YourStrong!Passw0rd;MultipleActiveResultSets=True",
+	      "Databases": [
+	        {
+	          "Name": "{databaseName}",
+	          "Tables": [
+	            {
+	              "Name": "{tableName}",
+	              "Insert": true,
+	              "Update": true,
+	              "Delete": true
+	            },
+	            {
+	              "Name": "{tableName}",
+	              "Insert": true,
+	              "Update": true,
+	              "Delete": false
+	            }
+	          ]
+	        }
+	      ]
+	    }
+	  ]
 	}
 EngineType accepts only MSSQL, Oracle and PostgreSQL for now
 
