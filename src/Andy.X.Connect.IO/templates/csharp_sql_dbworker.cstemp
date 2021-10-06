@@ -45,9 +45,9 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
                 producerInsert = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration()
                 {
                     Component = xNodeConfiguration.Component,
-                    Name = $"{dbName}-{table.Name}-insert",
+                    Name = $"{dbName}-{table.Name}-inserted",
                     RetryProducing = false,
-                    Topic = $"{dbName}-{table.Name}-insert"
+                    Topic = $"{dbName}-{table.Name}-inserted"
                 });
 
                 producerInsert.BuildAsync().Wait();
@@ -59,9 +59,9 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
                 producerUpdate = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration()
                 {
                     Component = xNodeConfiguration.Component,
-                    Name = $"{dbName}-{table.Name}-update",
+                    Name = $"{dbName}-{table.Name}-updated",
                     RetryProducing = false,
-                    Topic = $"{dbName}-{table.Name}-update"
+                    Topic = $"{dbName}-{table.Name}-updated"
                 });
                 producerUpdate.BuildAsync().Wait();
                 Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-update has been initialized");
@@ -72,9 +72,9 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
                 producerDelete = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration()
                 {
                     Component = xNodeConfiguration.Component,
-                    Name = $"{dbName}-{table.Name}-delete",
+                    Name = $"{dbName}-{table.Name}-deleted",
                     RetryProducing = false,
-                    Topic = $"{dbName}-{table.Name}-delete"
+                    Topic = $"{dbName}-{table.Name}-deleted"
                 });
                 producerDelete.BuildAsync().Wait();
                 Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-delete has been initialized");
