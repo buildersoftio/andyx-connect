@@ -1,8 +1,8 @@
 ﻿namespace Andy.X.Connect.Core.Configurations
 {
-    public class XNodeConfiguration
+    public class AndyXConfiguration
     {
-        public string[] NodeUrls { get; set; }
+        public string[] BrokerServiceUrls { get; set; }
         public string Tenant { get; set; }
         public string Product { get; set; }
         public string Component { get; set; }
