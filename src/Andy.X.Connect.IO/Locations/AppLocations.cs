@@ -27,14 +27,19 @@ namespace Andy.X.Connect.IO.Locations
         }
         #endregion
 
-        public static string GetXNodeConfigurationFile()
+        public static string GetAndyXConfigurationFile()
         {
-            return Path.Combine(ConfigDirectory(), "xnode_config.json");
+            return Path.Combine(ConfigDirectory(), "andyx_config.json");
         }
 
         public static string GetDbEnginesConfigurationFile()
         {
             return Path.Combine(ConfigDirectory(), "dbengine_config.json");
+        }
+
+        public static string GetQueueConfigurationFile()
+        {
+            return Path.Combine(ConfigDirectory(), "queues_config.json");
         }
 
         public static string GetDbServiceAssemblyFile(string engine, string database, string table)

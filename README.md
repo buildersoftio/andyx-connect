@@ -52,7 +52,7 @@ EngineType accepts only MSSQL, Oracle and PostgreSQL for now
 Below is an example of Andy X configuration file, this file should be saved into config directory of Andy X Connect before running this service.
 
 	{
-		"NodeUrls": ["https://localhost:9001"],
+		"BrokerServiceUrls": ["https://localhost:9001"],
 		"Tenant": "{tenantName}",
 		"Product": "{productName}",
 		"Component": "{componentName}"

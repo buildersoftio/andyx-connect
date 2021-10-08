@@ -18,7 +18,7 @@ namespace Andy.X.Connect.Experimental.Worker
 
         private bool isConnected;
 
-        public SqlDbTableService(string connectionString, string dbName, Table table, XNodeConfiguration xNodeConfiguration)
+        public SqlDbTableService(string connectionString, string dbName, Table table, AndyXConfiguration xNodeConfiguration)
         {
             this.dbName = dbName;
             this.table = table;
@@ -33,7 +33,7 @@ namespace Andy.X.Connect.Experimental.Worker
 
             XClient xClient = new XClient(new Client.Configurations.XClientConfiguration()
             {
-                XNodeUrl = xNodeConfiguration.NodeUrls[0],
+                XNodeUrl = xNodeConfiguration.BrokerServiceUrls[0],
                 Tenant = xNodeConfiguration.Tenant,
                 Product = xNodeConfiguration.Product
             });

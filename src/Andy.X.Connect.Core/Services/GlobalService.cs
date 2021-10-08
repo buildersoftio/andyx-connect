@@ -15,17 +15,19 @@ namespace Andy.X.Connect.Core.Services
 {
     public class GlobalService
     {
+        private AndyXConfiguration andyXConfiguration;
         private DbEngineConfiguration dbEngineConfiguration;
-        private XNodeConfiguration xNodeConfiguration;
+        private bool isDbEngineConfigImported;
 
         private ConcurrentDictionary<string, ISqlDbTableService> sqlDbTableServices;
         private SqlDbServiceGenerator sqlDbServiceGenerator;
 
         public GlobalService()
         {
+            isDbEngineConfigImported = false;
+
             ReadConfigurationFiles();
-            CreateMSSqlServices();
-            InitializeEngineDbTableServices();
+            CreateAndInitializeDbEngineServices();
         }
 
         private void ReadConfigurationFiles()
@@ -45,24 +47,35 @@ namespace Andy.X.Connect.Core.Services
                 Directory.CreateDirectory(AppLocations.TemplatesDirectory());
 
             // checking if files exits
-            if (File.Exists(AppLocations.GetDbEnginesConfigurationFile()) != true)
+            if (File.Exists(AppLocations.GetAndyXConfigurationFile()) != true)
             {
-                Logger.LogError($"Importing configuration files failed, dbengine_config.json file does not exists; path={AppLocations.GetDbEnginesConfigurationFile()}");
-                throw new Exception($"ANDYX-CONNECT|[error]|importing|dbengine_config.json|file not exists|path={AppLocations.GetDbEnginesConfigurationFile()}");
+                Logger.LogError($"Importing configuration files failed, andyx_config.json file does not exists; path={AppLocations.GetAndyXConfigurationFile()}");
+                throw new Exception($"ANDYX-CONNECT|[error]|importing|andyx_config.json|file not exists|path={AppLocations.GetAndyXConfigurationFile()}");
             }
 
-            // checking if files exits
-            if (File.Exists(AppLocations.GetXNodeConfigurationFile()) != true)
+            // checking if dbengines files exits
+            if (File.Exists(AppLocations.GetDbEnginesConfigurationFile()) == true)
             {
-                Logger.LogError($"Importing configuration files failed, xnode_config.json file does not exists; path={AppLocations.GetXNodeConfigurationFile()}");
-                throw new Exception($"ANDYX-CONNECT|[error]|importing|xnode_config.json|file not exists|path={AppLocations.GetXNodeConfigurationFile()}");
+                isDbEngineConfigImported = true;
+                dbEngineConfiguration = File.ReadAllText(AppLocations.GetDbEnginesConfigurationFile()).JsonToObject<DbEngineConfiguration>();
+                Logger.LogInformation($"Database engines are imported successfully");
+            }
+            else
+            {
+                Logger.LogWarning($"Importing database engine file configuration is skipped, dbengine_config.json file does not exists; path={AppLocations.GetDbEnginesConfigurationFile()}");
             }
 
-            dbEngineConfiguration = File.ReadAllText(AppLocations.GetDbEnginesConfigurationFile()).JsonToObject<DbEngineConfiguration>();
-            Logger.LogInformation($"Database engines are imported successfully");
-
-            xNodeConfiguration = File.ReadAllText(AppLocations.GetXNodeConfigurationFile()).JsonToObject<XNodeConfiguration>();
+            andyXConfiguration = File.ReadAllText(AppLocations.GetAndyXConfigurationFile()).JsonToObject<AndyXConfiguration>();
             Logger.LogInformation($"Andy X configuration settings are imported successfully");
+        }
+
+        private void CreateAndInitializeDbEngineServices()
+        {
+            if (isDbEngineConfigImported is true)
+            {
+                CreateMSSqlServices();
+                InitializeEngineDbTableServices();
+            }
         }
 
         private void CreateMSSqlServices()
@@ -87,8 +100,8 @@ namespace Andy.X.Connect.Core.Services
                                 LoadFromAssemblyPath(AppLocations.GetDbServiceAssemblyFile(engine.EngineType.ToString(), database.Name, table.Name));
                             var serviceType = tableWorker.GetType("Andy.X.Connect.MSSQL.Code.Generated.Service.SqlDbTableService");
 
-                            ConstructorInfo ctor = serviceType.GetConstructor(new[] { typeof(string), typeof(string), typeof(Table), typeof(XNodeConfiguration) });
-                            ISqlDbTableService instance = ctor.Invoke(new object[] { engine.ConnectionString, database.Name, table, xNodeConfiguration })
+                            ConstructorInfo ctor = serviceType.GetConstructor(new[] { typeof(string), typeof(string), typeof(Table), typeof(AndyXConfiguration) });
+                            ISqlDbTableService instance = ctor.Invoke(new object[] { engine.ConnectionString, database.Name, table, andyXConfiguration })
                                 as ISqlDbTableService;
                             instance.Connect();
 
