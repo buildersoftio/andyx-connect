@@ -25,6 +25,11 @@ namespace Andy.X.Connect.IO.Locations
         {
             return Path.Combine(GetRootDirectory(), "templates");
         }
+
+        public static string LogsDirectory()
+        {
+            return Path.Combine(GetRootDirectory(), "logs");
+        }
         #endregion
 
         public static string GetAndyXConfigurationFile()
@@ -60,6 +65,11 @@ namespace Andy.X.Connect.IO.Locations
         public static string[] GetAssemblyFiles()
         {
             return Directory.GetFiles(GetRootDirectory(), "*.dll");
+        }
+
+        public static string GetLogConfigurationFile()
+        {
+            return Path.Combine(LogsDirectory(), $"xconnect-{DateTime.Now:dd-MM-yyyy}.log");
         }
     }
 }
