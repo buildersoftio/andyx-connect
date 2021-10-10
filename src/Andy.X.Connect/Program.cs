@@ -15,7 +15,7 @@ namespace Andy.X.Connect
             loggerSink = new LoggerSink();
             loggerSink.InitializeSink();
 
-            Logger.ShowWelcomeTest();
+            Logger.ShowWelcomeText();
 
             globalService = new GlobalService();
             Logger.LogInformation("Andy X Connect is ready");
