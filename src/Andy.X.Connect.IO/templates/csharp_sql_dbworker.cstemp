@@ -158,22 +158,22 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
             if (table.Insert == true)
             {
                 producerInsert.OpenAsync().Wait();
-                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-insert is conencting to the x-node");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-inserted is active");
             }
             if (table.Update == true)
             {
                 producerUpdate.OpenAsync().Wait();
-                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-update is conencting to the x-node");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-updated is active");
 
             }
             if (table.Delete == true)
             {
                 producerDelete.OpenAsync().Wait();
-                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-delete is conencting to the x-node");
+                Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-deleted is active");
             }
 
             sqlTableDependency.Start();
-            Logger.LogInformation($"MSSQL Adapter for {table.Name} is connecting");
+            Logger.LogInformation($"MSSQL Adapter for {table.Name} is connected");
 
         }
 
