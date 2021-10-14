@@ -1,6 +1,7 @@
 ﻿using Andy.X.Connect.Core.Abstraction.Services.Sql;
 using Andy.X.Connect.Core.Configurations;
 using Andy.X.Connect.Core.Services.Generators;
+using Andy.X.Connect.Core.Services.Oracle;
 using Andy.X.Connect.Core.Utilities.Extensions.Json;
 using Andy.X.Connect.Core.Utilities.Logging;
 using Andy.X.Connect.IO.Locations;
@@ -90,28 +91,54 @@ namespace Andy.X.Connect.Core.Services
 
             foreach (var engine in dbEngineConfiguration.Engines)
             {
-                if (engine.EngineType == EngineTypes.MSSQL)
+                switch (engine.EngineType)
                 {
-                    foreach (var database in engine.Databases)
-                    {
-                        foreach (var table in database.Tables)
-                        {
-                            var tableWorker = AssemblyLoadContext.Default.
-                                LoadFromAssemblyPath(AppLocations.GetDbServiceAssemblyFile(engine.EngineType.ToString(), database.Name, table.Name));
-                            var serviceType = tableWorker.GetType("Andy.X.Connect.MSSQL.Code.Generated.Service.SqlDbTableService");
-
-                            ConstructorInfo ctor = serviceType.GetConstructor(new[] { typeof(string), typeof(string), typeof(Table), typeof(AndyXConfiguration) });
-                            ISqlDbTableService instance = ctor.Invoke(new object[] { engine.ConnectionString, database.Name, table, andyXConfiguration })
-                                as ISqlDbTableService;
-                            instance.Connect();
-
-                            sqlDbTableServices.TryAdd($"{database.Name}-{table.Name}", instance);
-                        }
-                    }
+                    case EngineTypes.MSSQL:
+                        InitializeMSSQLServices(engine);
+                        break;
+                    case EngineTypes.Oracle:
+                        InitializeOracleServers(engine);
+                        break;
+                    case EngineTypes.PostgreSQL:
+                        Logger.LogWarning($"Engine {engine.EngineType} has not been implemented");
+                        break;
+                    default:
+                        Logger.LogWarning($"Engine {engine.EngineType} has not been implemented");
+                        break;
                 }
-                else
+            }
+        }
+
+        private void InitializeOracleServers(Engine engine)
+        {
+            foreach (var database in engine.Databases)
+            {
+                foreach (var table in database.Tables)
                 {
-                    Logger.LogWarning($"Engine {engine.EngineType} has not been implemented");
+                    ISqlDbTableService instance = new OracleDbService(engine.ConnectionString, database.Name, table, andyXConfiguration);
+                    instance.Connect();
+
+                    sqlDbTableServices.TryAdd($"ORACLE-{database.Name}-{table.Name}", instance);
+                }
+            }
+        }
+
+        private void InitializeMSSQLServices(Engine engine)
+        {
+            foreach (var database in engine.Databases)
+            {
+                foreach (var table in database.Tables)
+                {
+                    var tableWorker = AssemblyLoadContext.Default.
+                        LoadFromAssemblyPath(AppLocations.GetDbServiceAssemblyFile(engine.EngineType.ToString(), database.Name, table.Name));
+                    var serviceType = tableWorker.GetType("Andy.X.Connect.MSSQL.Code.Generated.Service.SqlDbTableService");
+
+                    ConstructorInfo ctor = serviceType.GetConstructor(new[] { typeof(string), typeof(string), typeof(Table), typeof(AndyXConfiguration) });
+                    ISqlDbTableService instance = ctor.Invoke(new object[] { engine.ConnectionString, database.Name, table, andyXConfiguration })
+                        as ISqlDbTableService;
+                    instance.Connect();
+
+                    sqlDbTableServices.TryAdd($"MSSQL-{database.Name}-{table.Name}", instance);
                 }
             }
         }

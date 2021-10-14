@@ -101,7 +101,6 @@ namespace Andy.X.Connect.Core.Services.Oracle
                 default:
                     break;
             }
-
         }
 
         private async void ProduceInsertedEvent(List<Dictionary<string, object>> data)
