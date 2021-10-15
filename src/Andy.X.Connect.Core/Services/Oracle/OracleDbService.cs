@@ -183,7 +183,7 @@ namespace Andy.X.Connect.Core.Services.Oracle
                 RetryProducing = false,
                 Topic = $"{dbName}-{table.Name}-error-occurred"
             });
-            producerDelete.BuildAsync().Wait();
+            producerError.BuildAsync().Wait();
         }
     }
 }
