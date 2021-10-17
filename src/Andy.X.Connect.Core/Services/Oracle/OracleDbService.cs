@@ -77,7 +77,9 @@ namespace Andy.X.Connect.Core.Services.Oracle
             oracleCommand = new OracleCommand($"select * from {_table.Name}", oracleConnection);
 
             oracleDependency = new OracleDependency(oracleCommand);
-            oracleDependency.QueryBasedNotification = false;
+            //oracleDependency.QueryBasedNotification = false;
+            oracleCommand.Notification.IsNotifiedOnce = false;
+            oracleCommand.AddRowid = true;
 
             oracleDependency.OnChange += OracleDependency_OnChange;
         }
