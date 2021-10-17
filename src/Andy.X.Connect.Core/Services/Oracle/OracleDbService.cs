@@ -4,6 +4,7 @@ using Andy.X.Connect.Core.Configurations;
 using Andy.X.Connect.Core.Utilities.Extensions.Json;
 using Andy.X.Connect.Core.Utilities.Logging;
 using Oracle.ManagedDataAccess.Client;
+using System;
 using System.Collections.Generic;
 
 namespace Andy.X.Connect.Core.Services.Oracle
@@ -89,8 +90,14 @@ namespace Andy.X.Connect.Core.Services.Oracle
             switch (eventArgs.Info)
             {
                 case OracleNotificationInfo.Insert:
-                    //DataRow detailRow = args.Details.Rows[0];
-                    ProduceInsertedEvent(eventArgs.Details.Rows);
+                    // Testing
+                    Console.WriteLine($"TO_REMOVE_CODE    eventArgs.Source={eventArgs.Source}");
+                    Console.WriteLine($"TO_REMOVE_CODE    eventArgs.Details={eventArgs.Details}");
+                    Console.WriteLine($"TO_REMOVE_CODE    eventArgs.Details.Json={eventArgs.Details.ToJson()}");
+                    Console.WriteLine($"TO_REMOVE_CODE    eventArgs.Details.Rows={eventArgs.Details.Rows}");
+                    Console.WriteLine($"TO_REMOVE_CODE    eventArgs.Detail.Rows.Json={eventArgs.Details.Rows.ToJson()}");
+
+                    ProduceInsertedEvent(eventArgs.Details);
                     break;
                 case OracleNotificationInfo.Delete:
                     ProduceDeletedEvent(eventArgs.Details.ToListOfDictionary());
