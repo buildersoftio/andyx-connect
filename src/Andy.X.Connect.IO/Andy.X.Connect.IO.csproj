@@ -6,14 +6,25 @@
 
   <ItemGroup>
     <None Remove="templates\csharp_sql_dbworker.cstemp" />
+    <None Remove="templates\postgre-sql\CreateFunction_NotifyOnDataChange.sql" />
+    <None Remove="templates\postgre-sql\CreateTrigger_OnDataChange.sql" />
     <None Remove="templates\sql_modelgen.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="templates\csharp_sql_dbworker.cstemp">
+    <Content Include="templates\postgre-sql\CreateTrigger_OnDataChange.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="templates\sql_modelgen.sql">
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="templates\ms-sql\csharp_sql_dbworker.cstemp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="templates\ms-sql\sql_modelgen.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="templates\postgre-sql\CreateFunction_NotifyOnDataChange.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

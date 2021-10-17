@@ -26,6 +26,16 @@ namespace Andy.X.Connect.IO.Locations
             return Path.Combine(GetRootDirectory(), "templates");
         }
 
+        public static string MSSQLTemplatesDirectory()
+        {
+            return Path.Combine(TemplatesDirectory(), "ms-sql");
+        }
+
+        public static string PostgreTemplatesDirectory()
+        {
+            return Path.Combine(TemplatesDirectory(), "postgre-sql");
+        }
+
         public static string LogsDirectory()
         {
             return Path.Combine(GetRootDirectory(), "logs");
@@ -54,12 +64,22 @@ namespace Andy.X.Connect.IO.Locations
 
         public static string GetSqlModelGeneratorFile()
         {
-            return Path.Combine(TemplatesDirectory(), "sql_modelgen.sql");
+            return Path.Combine(MSSQLTemplatesDirectory(), "sql_modelgen.sql");
         }
 
         public static string GetServiceCodeGeneratorFile()
         {
-            return Path.Combine(TemplatesDirectory(), "csharp_sql_dbworker.cstemp");
+            return Path.Combine(MSSQLTemplatesDirectory(), "csharp_sql_dbworker.cstemp");
+        }
+
+        public static string GetCreateTrigger_OnDataChangeFile()
+        {
+            return Path.Combine(MSSQLTemplatesDirectory(), "CreateTrigger_OnDataChange.sql");
+        }
+
+        public static string GetCreateFunction_NotifyOnDataChangeFile()
+        {
+            return Path.Combine(MSSQLTemplatesDirectory(), "CreateFunction_NotifyOnDataChange.sql");
         }
 
         public static string[] GetAssemblyFiles()
