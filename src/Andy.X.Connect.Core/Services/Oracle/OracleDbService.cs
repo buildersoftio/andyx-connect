@@ -15,7 +15,7 @@ namespace Andy.X.Connect.Core.Services.Oracle
         private readonly Table _table;
         private readonly AndyXConfiguration _xNodeConfiguration;
 
-        private Producer<List<Dictionary<string, object>>> producerInsert;
+        private Producer<object> producerInsert;
         private Producer<List<Dictionary<string, object>>> producerUpdate;
         private Producer<List<Dictionary<string, object>>> producerDelete;
         private Producer<object> producerError;
@@ -89,7 +89,8 @@ namespace Andy.X.Connect.Core.Services.Oracle
             switch (eventArgs.Info)
             {
                 case OracleNotificationInfo.Insert:
-                    ProduceInsertedEvent(eventArgs.Details.ToListOfDictionary());
+                    //DataRow detailRow = args.Details.Rows[0];
+                    ProduceInsertedEvent(eventArgs.Details.Rows);
                     break;
                 case OracleNotificationInfo.Delete:
                     ProduceDeletedEvent(eventArgs.Details.ToListOfDictionary());
@@ -105,7 +106,7 @@ namespace Andy.X.Connect.Core.Services.Oracle
             }
         }
 
-        private async void ProduceInsertedEvent(List<Dictionary<string, object>> data)
+        private async void ProduceInsertedEvent(object data)
         {
             if (_table.Delete == true)
             {
@@ -140,7 +141,7 @@ namespace Andy.X.Connect.Core.Services.Oracle
 
             if (table.Insert == true)
             {
-                producerInsert = new Producer<List<Dictionary<string, object>>>(xClient, new Client.Configurations.ProducerConfiguration()
+                producerInsert = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration()
                 {
                     Component = _xNodeConfiguration.Component,
                     Name = $"{dbName}-{table.Name}-inserted",
