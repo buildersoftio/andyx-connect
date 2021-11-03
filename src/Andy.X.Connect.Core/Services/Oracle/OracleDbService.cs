@@ -16,7 +16,7 @@ namespace Andy.X.Connect.Core.Services.Oracle
         private readonly Table _table;
         private readonly AndyXConfiguration _xNodeConfiguration;
 
-        private Producer<object> producerInsert;
+        private Producer<List<Dictionary<string, object>>> producerInsert;
         private Producer<List<Dictionary<string, object>>> producerUpdate;
         private Producer<List<Dictionary<string, object>>> producerDelete;
         private Producer<object> producerError;
@@ -78,7 +78,7 @@ namespace Andy.X.Connect.Core.Services.Oracle
             oracleCommand = new OracleCommand($"select * from {_table.Name}", oracleConnection);
 
             oracleDependency = new OracleDependency(oracleCommand);
-            //oracleDependency.QueryBasedNotification = false;
+            oracleDependency.QueryBasedNotification = true;
             oracleCommand.Notification.IsNotifiedOnce = false;
             oracleCommand.AddRowid = true;
 
@@ -106,7 +106,7 @@ namespace Andy.X.Connect.Core.Services.Oracle
             }
         }
 
-        private async void ProduceInsertedEvent(object data)
+        private async void ProduceInsertedEvent(List<Dictionary<string, object>> data)
         {
             if (_table.Delete == true)
             {
@@ -141,7 +141,7 @@ namespace Andy.X.Connect.Core.Services.Oracle
 
             if (table.Insert == true)
             {
-                producerInsert = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration()
+                producerInsert = new Producer<List<Dictionary<string, object>>>(xClient, new Client.Configurations.ProducerConfiguration()
                 {
                     Component = _xNodeConfiguration.Component,
                     Name = $"{dbName}-{table.Name}-inserted",
@@ -150,7 +150,7 @@ namespace Andy.X.Connect.Core.Services.Oracle
                 });
 
                 producerInsert.BuildAsync().Wait();
-                Logger.LogInformation($"ORACLE producer {dbName}-{table.Name}-insert has been initialized");
+                Logger.LogInformation($"ORACLE producer {dbName}-{table.Name}-inserted is initializing");
             }
 
             if (table.Update == true)
@@ -163,7 +163,7 @@ namespace Andy.X.Connect.Core.Services.Oracle
                     Topic = $"{dbName}-{table.Name}-updated"
                 });
                 producerUpdate.BuildAsync().Wait();
-                Logger.LogInformation($"ORACLE producer {dbName}-{table.Name}-update has been initialized");
+                Logger.LogInformation($"ORACLE producer {dbName}-{table.Name}-updated is initializing");
             }
 
             if (table.Delete == true)
@@ -176,7 +176,7 @@ namespace Andy.X.Connect.Core.Services.Oracle
                     Topic = $"{dbName}-{table.Name}-deleted"
                 });
                 producerDelete.BuildAsync().Wait();
-                Logger.LogInformation($"ORACLE producer {dbName}-{table.Name}-delete has been initialized");
+                Logger.LogInformation($"ORACLE producer {dbName}-{table.Name}-deleted is initializing");
             }
 
             producerError = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration()
