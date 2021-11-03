@@ -5,7 +5,6 @@ using Andy.X.Connect.Core.Services.Oracle;
 using Andy.X.Connect.Core.Utilities.Extensions.Json;
 using Andy.X.Connect.Core.Utilities.Logging;
 using Andy.X.Connect.IO.Locations;
-
 using System;
 using System.Collections.Concurrent;
 using System.IO;

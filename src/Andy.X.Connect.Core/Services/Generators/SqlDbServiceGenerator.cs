@@ -4,8 +4,6 @@ using Andy.X.Connect.IO.Locations;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
@@ -26,7 +24,6 @@ namespace Andy.X.Connect.Core.Services.Generators
         public SqlDbServiceGenerator(DbEngineConfiguration dbEngineConfiguration)
         {
             this.dbEngineConfiguration = dbEngineConfiguration;
-            Logger.LogInformation("MSSQL schemas started");
         }
 
         public void CreateMSSqlTableModels()
@@ -62,8 +59,6 @@ namespace Andy.X.Connect.Core.Services.Generators
                     }
                 }
             }
-            Logger.LogInformation("MSSQL schemas finished");
-
         }
 
         private void ConvertSqlTableToCSharpModel(Engine engine, string database, string table, string command)
@@ -85,9 +80,7 @@ namespace Andy.X.Connect.Core.Services.Generators
 
         private void BuildSqlDbServiceDllFile(Engine engine, string database, string table, string code)
         {
-
             string serviceName = $"Andy.X.{engine.EngineType}.{database}.{table}.Service";
-
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             CSharpCompilation compilation = CSharpCompilation.Create(
@@ -133,6 +126,5 @@ namespace Andy.X.Connect.Core.Services.Generators
 
             return returnList;
         }
-
     }
 }
