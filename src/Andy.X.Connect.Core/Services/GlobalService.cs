@@ -2,6 +2,7 @@
 using Andy.X.Connect.Core.Configurations;
 using Andy.X.Connect.Core.Services.Generators;
 using Andy.X.Connect.Core.Services.Oracle;
+using Andy.X.Connect.Core.Services.Postgre;
 using Andy.X.Connect.Core.Utilities.Extensions.Json;
 using Andy.X.Connect.Core.Utilities.Logging;
 using Andy.X.Connect.IO.Locations;
@@ -96,10 +97,10 @@ namespace Andy.X.Connect.Core.Services
                         InitializeMSSQLServices(engine);
                         break;
                     case EngineTypes.Oracle:
-                        InitializeOracleServers(engine);
+                        InitializeOracleServices(engine);
                         break;
                     case EngineTypes.PostgreSQL:
-                        Logger.LogWarning($"Engine {engine.EngineType} has not been implemented");
+                        InitializePostgreServices(engine);
                         break;
                     default:
                         Logger.LogWarning($"Engine {engine.EngineType} has not been implemented");
@@ -108,7 +109,21 @@ namespace Andy.X.Connect.Core.Services
             }
         }
 
-        private void InitializeOracleServers(Engine engine)
+        private void InitializePostgreServices(Engine engine)
+        {
+            foreach (var database in engine.Databases)
+            {
+                foreach (var table in database.Tables)
+                {
+                    ISqlDbTableService instance = new PostgreDbService(engine.ConnectionString, database.Name, table, andyXConfiguration);
+                    instance.Connect();
+
+                    sqlDbTableServices.TryAdd($"POSTGRE-{database.Name}-{table.Name}", instance);
+                }
+            }
+        }
+
+        private void InitializeOracleServices(Engine engine)
         {
             foreach (var database in engine.Databases)
             {
