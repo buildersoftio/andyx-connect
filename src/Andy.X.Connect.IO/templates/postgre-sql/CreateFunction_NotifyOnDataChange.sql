@@ -2,7 +2,7 @@
 -- Code Generator
 -- SQL Command - This is the first step
 
-CREATE FUNCTION public."AndyX_{table_name}_NotifyOnDataChange"()
+CREATE OR REPLACE FUNCTION public."AndyX_{table_name}_NotifyOnDataChange"()
   RETURNS trigger
   LANGUAGE 'plpgsql'
 AS $BODY$ 
