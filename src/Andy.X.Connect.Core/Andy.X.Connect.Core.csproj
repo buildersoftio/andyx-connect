@@ -6,9 +6,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="Buildersoft.Andy.X.Client" Version="2.0.3-preview" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0" />
-		<PackageReference Include="Npgsql" Version="5.0.10" />
-		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.3" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" />
+		<PackageReference Include="Npgsql" Version="6.0.0" />
+		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.4" />
 		<PackageReference Include="SqlTableDependency" Version="8.5.8" />
 		<PackageReference Include="System.Collections" Version="4.3.0" />
 		<PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
