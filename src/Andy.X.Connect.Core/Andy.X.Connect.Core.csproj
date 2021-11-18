@@ -15,6 +15,7 @@
 	</ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Andy.X.Connect.Model\Andy.X.Connect.Model.csproj" />
     <ProjectReference Include="..\Andy.X.Connect.IO\Andy.X.Connect.IO.csproj" />
   </ItemGroup>
 

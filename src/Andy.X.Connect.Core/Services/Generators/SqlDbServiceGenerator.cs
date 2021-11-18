@@ -43,19 +43,19 @@ namespace Andy.X.Connect.Core.Services.Generators
 
                         isModelReturned = false;
                         sqlCurrentTableTemplate = sqlTemplate.Replace("{TABLE_NAME}", table.Name);
-                        ConvertSqlTableToCSharpModel(engine, database.Name, table.Name, sqlCurrentTableTemplate);
+                        ConvertSqlTableToCSharpModel(engine, database.NameOrSchema, table.Name, sqlCurrentTableTemplate);
 
                         while (isModelReturned != true)
                         {
                             Thread.Sleep(300);
                         }
 
-                        Logger.LogInformation($"MSSQL schema for table {engine.EngineType}.{database.Name}.{table.Name} is creating");
+                        Logger.LogInformation($"MSSQL schema for table {engine.EngineType}.{database.NameOrSchema}.{table.Name} is creating");
 
                         // Generate dll file for Service
                         string code = activeCodeGeneratedTemplate;
-                        BuildSqlDbServiceDllFile(engine, database.Name, table.Name, code);
-                        Logger.LogInformation($"MSSQL schema for table {engine.EngineType}.{database.Name}.{table.Name} is created successfully");
+                        BuildSqlDbServiceDllFile(engine, database.NameOrSchema, table.Name, code);
+                        Logger.LogInformation($"MSSQL schema for table {engine.EngineType}.{database.NameOrSchema}.{table.Name} is created successfully");
                     }
                 }
             }

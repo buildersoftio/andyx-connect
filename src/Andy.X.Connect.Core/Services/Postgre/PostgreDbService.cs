@@ -1,11 +1,15 @@
 ﻿using Andy.X.Client;
+using Andy.X.Client.Extensions;
 using Andy.X.Connect.Core.Abstraction.Services.Sql;
 using Andy.X.Connect.Core.Configurations;
 using Andy.X.Connect.Core.Utilities.Logging;
 using Andy.X.Connect.IO.Locations;
+using Andy.X.Connect.Model.Postgres;
 using Npgsql;
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Andy.X.Connect.Core.Services.Postgre
 {
@@ -23,6 +27,8 @@ namespace Andy.X.Connect.Core.Services.Postgre
 
         private NpgsqlConnection pgConnection;
         private NpgsqlCommand pgCommand;
+
+        private CancellationTokenSource cancelNotification;
 
         private bool isConnected;
 
@@ -58,19 +64,24 @@ namespace Andy.X.Connect.Core.Services.Postgre
             }
 
             pgConnection.Open();
-
             pgCommand.ExecuteNonQuery();
+
+            cancelNotification = new CancellationTokenSource();
+            Task.Run(() => ContinueWaitingEvents(cancelNotification.Token));
+
             Logger.LogInformation($"POSTGRE Adapter for {_table.Name} connected");
         }
 
         public void Disconnect()
         {
             pgConnection.Close();
+            CancellationTokenSource source = new CancellationTokenSource();
+            source.Cancel();
         }
 
         private async void ProduceInsertedEvent(object data)
         {
-            if (_table.Delete == true)
+            if (_table.Insert == true)
             {
                 await producerInsert.ProduceAsync(data);
             }
@@ -78,7 +89,7 @@ namespace Andy.X.Connect.Core.Services.Postgre
 
         private async void ProduceUpdatedEvent(object data)
         {
-            if (_table.Delete == true)
+            if (_table.Update == true)
             {
                 await producerUpdate.ProduceAsync(data);
             }
@@ -153,18 +164,42 @@ namespace Andy.X.Connect.Core.Services.Postgre
             pgConnection.Close();
 
             pgConnection.Notification += PgConnection_Notification;
-            pgCommand = new NpgsqlCommand($"LISTEN andyx_{_table.Name.ToLower()}_datachange;", pgConnection);
+            pgCommand = new NpgsqlCommand($"LISTEN andyx{_table.Name.ToLower()}datachange;", pgConnection);
+        }
+
+        private Task ContinueWaitingEvents(CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
+                pgConnection.Wait();
+            }
+
+            return Task.CompletedTask;
         }
 
         private void PgConnection_Notification(object sender, NpgsqlNotificationEventArgs e)
         {
-            // Test the payload of postgre in this case.
+            Payload payload = e.Payload.JsonToObject<Payload>();
+
+            if (payload.Action == "INSERT")
+                ProduceInsertedEvent(payload.Data);
+
+            if (payload.Action == "UPDATE")
+                ProduceUpdatedEvent(payload.Data);
+
+            if (payload.Action == "DELETE")
+                ProduceDeletedEvent(payload.Data);
         }
 
         private void CreateOrReplacePostgreFunction()
         {
             string functionCommand = File.ReadAllText(AppLocations.GetCreateFunction_NotifyOnDataChangeFile());
-            functionCommand = functionCommand.Replace("{table_name}", _table.Name.ToLower());
+            functionCommand = functionCommand
+                .Replace("{table_name}", _table.Name.ToLower())
+                .Replace("{database_name}", _dbName.ToLower());
 
             pgCommand = new NpgsqlCommand(functionCommand, pgConnection);
             pgCommand.ExecuteNonQuery();
@@ -172,12 +207,21 @@ namespace Andy.X.Connect.Core.Services.Postgre
 
         private void CreatePostgreTrigger()
         {
-            string triggerCommand = File.ReadAllText(AppLocations.GetCreateFunction_NotifyOnDataChangeFile());
+            string triggerCommand = File.ReadAllText(AppLocations.GetCreateTrigger_OnDataChangeFile());
             triggerCommand = triggerCommand.Replace("{table_name}", _table.Name.ToLower())
                                            .Replace("{database_name}", _dbName);
 
             pgCommand = new NpgsqlCommand(triggerCommand, pgConnection);
-            pgCommand.ExecuteNonQuery();
+            try
+            {
+                pgCommand.ExecuteNonQuery();
+
+            }
+            catch (Exception)
+            {
+                // Trigger already exists,
+                // TODO Check first if trigger exists..
+            }
         }
     }
 }
