@@ -1,9 +1,9 @@
 # Buildersoft Andy X Connect Docker File
 
-FROM mcr.microsoft.com/dotnet/runtime:5.0 AS base
+FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["src/Andy.X.Connect/Andy.X.Connect.csproj", "src/Andy.X.Connect/"]
 COPY ["src/Andy.X.Connect.IO/Andy.X.Connect.IO.csproj", "src/Andy.X.Connect.IO/"]

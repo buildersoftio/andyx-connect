@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Andy.X.Connect.Core.Utilities.Extensions.Json
 {
