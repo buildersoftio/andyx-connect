@@ -2,6 +2,7 @@
 using Andy.X.Connect.Core.Configurations;
 using Andy.X.Connect.Core.Services.Generators;
 using Andy.X.Connect.Core.Services.Oracle;
+using Andy.X.Connect.Core.Services.Postgre;
 using Andy.X.Connect.Core.Utilities.Extensions.Json;
 using Andy.X.Connect.Core.Utilities.Logging;
 using Andy.X.Connect.IO.Locations;
@@ -96,10 +97,11 @@ namespace Andy.X.Connect.Core.Services
                         InitializeMSSQLServices(engine);
                         break;
                     case EngineTypes.Oracle:
-                        InitializeOracleServers(engine);
+                        Logger.LogWarning($"Engine {engine.EngineType} has not been implemented");
+                        //InitializeOracleServices(engine);
                         break;
                     case EngineTypes.PostgreSQL:
-                        Logger.LogWarning($"Engine {engine.EngineType} has not been implemented");
+                        InitializePostgreServices(engine);
                         break;
                     default:
                         Logger.LogWarning($"Engine {engine.EngineType} has not been implemented");
@@ -108,16 +110,30 @@ namespace Andy.X.Connect.Core.Services
             }
         }
 
-        private void InitializeOracleServers(Engine engine)
+        private void InitializePostgreServices(Engine engine)
         {
             foreach (var database in engine.Databases)
             {
                 foreach (var table in database.Tables)
                 {
-                    ISqlDbTableService instance = new OracleDbService(engine.ConnectionString, database.Name, table, andyXConfiguration);
+                    ISqlDbTableService instance = new PostgreDbService(engine.ConnectionString, database.NameOrSchema, table, andyXConfiguration);
                     instance.Connect();
 
-                    sqlDbTableServices.TryAdd($"ORACLE-{database.Name}-{table.Name}", instance);
+                    sqlDbTableServices.TryAdd($"POSTGRE-{database.NameOrSchema}-{table.Name}", instance);
+                }
+            }
+        }
+
+        private void InitializeOracleServices(Engine engine)
+        {
+            foreach (var database in engine.Databases)
+            {
+                foreach (var table in database.Tables)
+                {
+                    ISqlDbTableService instance = new OracleDbService(engine.ConnectionString, database.NameOrSchema, table, andyXConfiguration);
+                    instance.Connect();
+
+                    sqlDbTableServices.TryAdd($"ORACLE-{database.NameOrSchema}-{table.Name}", instance);
                 }
             }
         }
@@ -129,15 +145,15 @@ namespace Andy.X.Connect.Core.Services
                 foreach (var table in database.Tables)
                 {
                     var tableWorker = AssemblyLoadContext.Default.
-                        LoadFromAssemblyPath(AppLocations.GetDbServiceAssemblyFile(engine.EngineType.ToString(), database.Name, table.Name));
+                        LoadFromAssemblyPath(AppLocations.GetDbServiceAssemblyFile(engine.EngineType.ToString(), database.NameOrSchema, table.Name));
                     var serviceType = tableWorker.GetType("Andy.X.Connect.MSSQL.Code.Generated.Service.SqlDbTableService");
 
                     ConstructorInfo ctor = serviceType.GetConstructor(new[] { typeof(string), typeof(string), typeof(Table), typeof(AndyXConfiguration) });
-                    ISqlDbTableService instance = ctor.Invoke(new object[] { engine.ConnectionString, database.Name, table, andyXConfiguration })
+                    ISqlDbTableService instance = ctor.Invoke(new object[] { engine.ConnectionString, database.NameOrSchema, table, andyXConfiguration })
                         as ISqlDbTableService;
                     instance.Connect();
 
-                    sqlDbTableServices.TryAdd($"MSSQL-{database.Name}-{table.Name}", instance);
+                    sqlDbTableServices.TryAdd($"MSSQL-{database.NameOrSchema}-{table.Name}", instance);
                 }
             }
         }

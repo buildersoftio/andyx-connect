@@ -74,12 +74,12 @@ namespace Andy.X.Connect.IO.Locations
 
         public static string GetCreateTrigger_OnDataChangeFile()
         {
-            return Path.Combine(MSSQLTemplatesDirectory(), "CreateTrigger_OnDataChange.sql");
+            return Path.Combine(PostgreTemplatesDirectory(), "CreateTrigger_OnDataChange.sql");
         }
 
         public static string GetCreateFunction_NotifyOnDataChangeFile()
         {
-            return Path.Combine(MSSQLTemplatesDirectory(), "CreateFunction_NotifyOnDataChange.sql");
+            return Path.Combine(PostgreTemplatesDirectory(), "CreateFunction_NotifyOnDataChange.sql");
         }
 
         public static string[] GetAssemblyFiles()
