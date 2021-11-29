@@ -108,14 +108,14 @@ namespace Andy.X.Connect.Core.Services.Postgre
         {
             XClient xClient = new XClient(new Client.Configurations.XClientConfiguration()
             {
-                XNodeUrl = _xNodeConfiguration.BrokerServiceUrls[0],
+                ServiceUrl = _xNodeConfiguration.BrokerServiceUrls[0],
                 Tenant = _xNodeConfiguration.Tenant,
                 Product = _xNodeConfiguration.Product
             });
 
             if (table.Insert == true)
             {
-                producerInsert = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration()
+                producerInsert = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration<object>()
                 {
                     Component = _xNodeConfiguration.Component,
                     Name = $"{dbName}-{table.Name}-inserted",
@@ -129,7 +129,7 @@ namespace Andy.X.Connect.Core.Services.Postgre
 
             if (table.Update == true)
             {
-                producerUpdate = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration()
+                producerUpdate = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration<object>()
                 {
                     Component = _xNodeConfiguration.Component,
                     Name = $"{dbName}-{table.Name}-updated",
@@ -142,7 +142,7 @@ namespace Andy.X.Connect.Core.Services.Postgre
 
             if (table.Delete == true)
             {
-                producerDelete = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration()
+                producerDelete = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration<object>()
                 {
                     Component = _xNodeConfiguration.Component,
                     Name = $"{dbName}-{table.Name}-deleted",
