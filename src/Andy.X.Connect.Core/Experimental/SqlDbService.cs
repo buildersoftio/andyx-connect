@@ -33,14 +33,14 @@ namespace Andy.X.Connect.Experimental.Worker
 
             XClient xClient = new XClient(new Client.Configurations.XClientConfiguration()
             {
-                XNodeUrl = xNodeConfiguration.BrokerServiceUrls[0],
+                ServiceUrl = xNodeConfiguration.BrokerServiceUrls[0],
                 Tenant = xNodeConfiguration.Tenant,
                 Product = xNodeConfiguration.Product
             });
 
             if (table.Insert == true)
             {
-                producerInsert = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration()
+                producerInsert = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration<Object>()
                 {
                     Component = xNodeConfiguration.Component,
                     Name = $"{dbName}-{table.Name}-insert",
@@ -54,7 +54,7 @@ namespace Andy.X.Connect.Experimental.Worker
 
             if (table.Update == true)
             {
-                producerUpdate = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration()
+                producerUpdate = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration<Object>()
                 {
                     Component = xNodeConfiguration.Component,
                     Name = $"{dbName}-{table.Name}-update",
@@ -67,7 +67,7 @@ namespace Andy.X.Connect.Experimental.Worker
 
             if (table.Delete == true)
             {
-                producerDelete = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration()
+                producerDelete = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration<Object>()
                 {
                     Component = xNodeConfiguration.Component,
                     Name = $"{dbName}-{table.Name}-delete",

@@ -4,8 +4,6 @@ using Andy.X.Connect.IO.Locations;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
@@ -26,7 +24,6 @@ namespace Andy.X.Connect.Core.Services.Generators
         public SqlDbServiceGenerator(DbEngineConfiguration dbEngineConfiguration)
         {
             this.dbEngineConfiguration = dbEngineConfiguration;
-            Logger.LogInformation("MSSQL schemas started");
         }
 
         public void CreateMSSqlTableModels()
@@ -46,24 +43,22 @@ namespace Andy.X.Connect.Core.Services.Generators
 
                         isModelReturned = false;
                         sqlCurrentTableTemplate = sqlTemplate.Replace("{TABLE_NAME}", table.Name);
-                        ConvertSqlTableToCSharpModel(engine, database.Name, table.Name, sqlCurrentTableTemplate);
+                        ConvertSqlTableToCSharpModel(engine, database.NameOrSchema, table.Name, sqlCurrentTableTemplate);
 
                         while (isModelReturned != true)
                         {
                             Thread.Sleep(300);
                         }
 
-                        Logger.LogInformation($"MSSQL schema for table {engine.EngineType}.{database.Name}.{table.Name} is creating");
+                        Logger.LogInformation($"MSSQL schema for table {engine.EngineType}.{database.NameOrSchema}.{table.Name} is creating");
 
                         // Generate dll file for Service
                         string code = activeCodeGeneratedTemplate;
-                        BuildSqlDbServiceDllFile(engine, database.Name, table.Name, code);
-                        Logger.LogInformation($"MSSQL schema for table {engine.EngineType}.{database.Name}.{table.Name} is created successfully");
+                        BuildSqlDbServiceDllFile(engine, database.NameOrSchema, table.Name, code);
+                        Logger.LogInformation($"MSSQL schema for table {engine.EngineType}.{database.NameOrSchema}.{table.Name} is created successfully");
                     }
                 }
             }
-            Logger.LogInformation("MSSQL schemas finished");
-
         }
 
         private void ConvertSqlTableToCSharpModel(Engine engine, string database, string table, string command)
@@ -85,9 +80,7 @@ namespace Andy.X.Connect.Core.Services.Generators
 
         private void BuildSqlDbServiceDllFile(Engine engine, string database, string table, string code)
         {
-
             string serviceName = $"Andy.X.{engine.EngineType}.{database}.{table}.Service";
-
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             CSharpCompilation compilation = CSharpCompilation.Create(
@@ -133,6 +126,5 @@ namespace Andy.X.Connect.Core.Services.Generators
 
             return returnList;
         }
-
     }
 }

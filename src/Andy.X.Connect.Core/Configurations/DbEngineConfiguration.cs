@@ -26,7 +26,7 @@ namespace Andy.X.Connect.Core.Configurations
 
     public class Database
     {
-        public string Name { get; set; }
+        public string NameOrSchema { get; set; }
         public List<Table> Tables { get; set; }
 
         public Database()
