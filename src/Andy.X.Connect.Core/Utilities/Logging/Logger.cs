@@ -47,13 +47,13 @@ namespace Andy.X.Connect.Core.Utilities.Logging
         {
             var generalColor = Console.ForegroundColor;
             Trace.WriteLine("                   Starting Buildersoft Andy X Connect");
-            Trace.WriteLine("                   Copyright (C) 2021 Buildersoft LLC");
+            Trace.WriteLine("                   Copyright (C) 2022 Buildersoft LLC");
             Trace.WriteLine("");
             Console.ForegroundColor = ConsoleColor.Red;
             Trace.Write("  ###"); Console.ForegroundColor = generalColor; Trace.WriteLine("      ###");
             Console.ForegroundColor = ConsoleColor.Red;
             Trace.Write("    ###"); Console.ForegroundColor = generalColor; Trace.Write("  ###");
-            Trace.WriteLine("       Andy X Connect 1.0.0-rc2. Copyright (C) 2021 Buildersoft LLC");
+            Trace.WriteLine("       Andy X Connect 1.0.0-rc3. Copyright (C) 2022 Buildersoft LLC");
             Console.ForegroundColor = ConsoleColor.Red;
             Trace.Write("      ####         "); Console.ForegroundColor = generalColor; Trace.WriteLine("Licensed under the Apache License 2.0.  See https://bit.ly/3DqVQbx");
             Console.ForegroundColor = ConsoleColor.Red;
