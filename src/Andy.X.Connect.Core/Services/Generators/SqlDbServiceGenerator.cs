@@ -117,6 +117,8 @@ namespace Andy.X.Connect.Core.Services.Generators
             returnList.Add(MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Console.dll")));
             returnList.Add(MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Core.dll")));
             returnList.Add(MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Runtime.dll")));
+            returnList.Add(MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Collections.dll")));
+            //System.Collections
 
             // Adding Buildersoft related assemblies
             foreach (var file in AppLocations.GetAssemblyFiles())
