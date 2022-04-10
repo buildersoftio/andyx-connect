@@ -6,5 +6,8 @@
         public string Tenant { get; set; }
         public string Product { get; set; }
         public string Component { get; set; }
+
+        public string TenantToken { get; set; }
+        public string ComponentToken { get; set; }
     }
 }

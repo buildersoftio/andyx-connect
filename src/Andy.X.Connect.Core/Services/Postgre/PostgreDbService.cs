@@ -110,6 +110,7 @@ namespace Andy.X.Connect.Core.Services.Postgre
             {
                 ServiceUrl = _xNodeConfiguration.BrokerServiceUrls[0],
                 Tenant = _xNodeConfiguration.Tenant,
+                TenantToken = _xNodeConfiguration.TenantToken,
                 Product = _xNodeConfiguration.Product
             });
 
@@ -118,10 +119,12 @@ namespace Andy.X.Connect.Core.Services.Postgre
                 producerInsert = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration<object>()
                 {
                     Component = _xNodeConfiguration.Component,
+                    ComponentToken = _xNodeConfiguration.ComponentToken,
                     Name = $"{dbName}-{table.Name}-inserted",
                     RetryProducing = false,
                     Topic = $"{dbName}-{table.Name}-inserted"
                 });
+                producerInsert.AddDefaultHeader("x-application", "andyx-connect-postgres");
 
                 producerInsert.BuildAsync().Wait();
                 Logger.LogInformation($"POSTGRE producer {dbName}-{table.Name}-inserted is initializing");
@@ -132,10 +135,13 @@ namespace Andy.X.Connect.Core.Services.Postgre
                 producerUpdate = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration<object>()
                 {
                     Component = _xNodeConfiguration.Component,
+                    ComponentToken = _xNodeConfiguration.ComponentToken,
                     Name = $"{dbName}-{table.Name}-updated",
                     RetryProducing = false,
                     Topic = $"{dbName}-{table.Name}-updated"
                 });
+                producerUpdate.AddDefaultHeader("x-application", "andyx-connect-postgres");
+
                 producerUpdate.BuildAsync().Wait();
                 Logger.LogInformation($"POSTGRE producer {dbName}-{table.Name}-updated is initializing");
             }
@@ -145,10 +151,13 @@ namespace Andy.X.Connect.Core.Services.Postgre
                 producerDelete = new Producer<object>(xClient, new Client.Configurations.ProducerConfiguration<object>()
                 {
                     Component = _xNodeConfiguration.Component,
+                    ComponentToken = _xNodeConfiguration.ComponentToken,
                     Name = $"{dbName}-{table.Name}-deleted",
                     RetryProducing = false,
                     Topic = $"{dbName}-{table.Name}-deleted"
                 });
+                producerDelete.AddDefaultHeader("x-application", "andyx-connect-postgres");
+
                 producerDelete.BuildAsync().Wait();
                 Logger.LogInformation($"POSTGRE producer {dbName}-{table.Name}-deleted is initializing");
             }

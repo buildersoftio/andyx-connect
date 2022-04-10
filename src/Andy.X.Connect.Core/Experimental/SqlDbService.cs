@@ -35,7 +35,8 @@ namespace Andy.X.Connect.Experimental.Worker
             {
                 ServiceUrl = xNodeConfiguration.BrokerServiceUrls[0],
                 Tenant = xNodeConfiguration.Tenant,
-                Product = xNodeConfiguration.Product
+                Product = xNodeConfiguration.Product,
+                TenantToken = xNodeConfiguration.TenantToken,
             });
 
             if (table.Insert == true)
@@ -43,11 +44,12 @@ namespace Andy.X.Connect.Experimental.Worker
                 producerInsert = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration<Object>()
                 {
                     Component = xNodeConfiguration.Component,
+                    ComponentToken = xNodeConfiguration.ComponentToken,
                     Name = $"{dbName}-{table.Name}-insert",
                     RetryProducing = false,
-                    Topic = $"{dbName}-{table.Name}-insert"
+                    Topic = $"{dbName}-{table.Name}-inserted"
                 });
-
+                producerInsert.AddDefaultHeader("x-application", "andyx-connect-mssql");
                 producerInsert.BuildAsync().Wait();
                 Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|insertProducer|{dbName}-{table.Name}-insert|initialized");
             }
@@ -57,10 +59,12 @@ namespace Andy.X.Connect.Experimental.Worker
                 producerUpdate = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration<Object>()
                 {
                     Component = xNodeConfiguration.Component,
+                    ComponentToken = xNodeConfiguration.ComponentToken,
                     Name = $"{dbName}-{table.Name}-update",
                     RetryProducing = false,
-                    Topic = $"{dbName}-{table.Name}-update"
+                    Topic = $"{dbName}-{table.Name}-updated"
                 });
+                producerUpdate.AddDefaultHeader("x-application", "andyx-connect-mssql");
                 producerUpdate.BuildAsync().Wait();
                 Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|updateProducer|{dbName}-{table.Name}-update|initialized");
             }
@@ -70,10 +74,12 @@ namespace Andy.X.Connect.Experimental.Worker
                 producerDelete = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration<Object>()
                 {
                     Component = xNodeConfiguration.Component,
+                    ComponentToken = xNodeConfiguration.ComponentToken,
                     Name = $"{dbName}-{table.Name}-delete",
                     RetryProducing = false,
-                    Topic = $"{dbName}-{table.Name}-delete"
+                    Topic = $"{dbName}-{table.Name}-deleted"
                 });
+                producerDelete.AddDefaultHeader("x-application", "andyx-connect-mssql");
                 producerDelete.BuildAsync().Wait();
                 Console.WriteLine($"ANDYX-CONNECT-MSSQL|[ok]|deleteProducer|{dbName}-{table.Name}-delete|initialized");
             }

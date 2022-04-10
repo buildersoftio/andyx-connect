@@ -37,6 +37,7 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
             {
                 ServiceUrl = xNodeConfiguration.BrokerServiceUrls[0],
                 Tenant = xNodeConfiguration.Tenant,
+                TenantToken = xNodeConfiguration.TenantToken,
                 Product = xNodeConfiguration.Product
             });
 
@@ -45,10 +46,12 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
                 producerInsert = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration<Object>()
                 {
                     Component = xNodeConfiguration.Component,
+                    ComponentToken = xNodeConfiguration.ComponentToken,
                     Name = $"{dbName}-{table.Name}-inserted",
                     RetryProducing = false,
                     Topic = $"{dbName}-{table.Name}-inserted"
                 });
+                producerInsert.AddDefaultHeader("x-application", "andyx-connect-mssql");
 
                 producerInsert.BuildAsync().Wait();
                 Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-insert has been initialized");
@@ -59,10 +62,13 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
                 producerUpdate = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration<Object>()
                 {
                     Component = xNodeConfiguration.Component,
+                    ComponentToken = xNodeConfiguration.ComponentToken,
                     Name = $"{dbName}-{table.Name}-updated",
                     RetryProducing = false,
                     Topic = $"{dbName}-{table.Name}-updated"
                 });
+                producerUpdate.AddDefaultHeader("x-application", "andyx-connect-mssql");
+
                 producerUpdate.BuildAsync().Wait();
                 Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-update has been initialized");
             }
@@ -72,10 +78,13 @@ namespace Andy.X.Connect.MSSQL.Code.Generated.Service
                 producerDelete = new Producer<Object>(xClient, new Client.Configurations.ProducerConfiguration<Object>()
                 {
                     Component = xNodeConfiguration.Component,
+                    ComponentToken = xNodeConfiguration.ComponentToken,
                     Name = $"{dbName}-{table.Name}-deleted",
                     RetryProducing = false,
                     Topic = $"{dbName}-{table.Name}-deleted"
                 });
+                producerDelete.AddDefaultHeader("x-application", "andyx-connect-mssql");
+
                 producerDelete.BuildAsync().Wait();
                 Logger.LogInformation($"MSSQL producer {dbName}-{table.Name}-delete has been initialized");
             }
